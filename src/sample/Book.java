@@ -1,30 +1,42 @@
 package sample;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 
 public class Book {
-    private final SimpleStringProperty id;
+
+    private final SimpleStringProperty bookid;
     private final SimpleStringProperty author;
     private final SimpleStringProperty title;
     private final SimpleStringProperty genre;
     private final SimpleStringProperty price;
     private final SimpleStringProperty pubdate;
-    private final SimpleStringProperty description;
+    private final SimpleStringProperty descripe;
+    private final SimpleIntegerProperty count;
 
 
-    Book(String idb, String authorb, String titleb, String genreb, String priceb, String date, String des){
-        this.id = new SimpleStringProperty(idb);
+    Book(int count, String idb, String authorb, String titleb, String genreb, String priceb, String date, String desc){
+        this.count = new SimpleIntegerProperty(count);
+        this.bookid = new SimpleStringProperty(idb);
         this.author = new SimpleStringProperty(authorb);
         this.title = new SimpleStringProperty(titleb);
         this.genre = new SimpleStringProperty(genreb);
         this.price = new SimpleStringProperty(priceb);
         this.pubdate = new SimpleStringProperty(date);
-        this.description = new SimpleStringProperty(des);
+        this.descripe = new SimpleStringProperty(desc);
     }
 
-    public String getId() {
-        return id.get();
+    public int getCount() {
+        return count.get();
+    }
+
+    public void setCount(int count) {
+        this.count.set(count);
+    }
+
+    public String getBookId() {
+        return bookid.get();
     }
 
     public String getAuthor(){
@@ -48,11 +60,11 @@ public class Book {
     }
 
     public String getDesc(){
-        return description.get();
+        return descripe.get();
     }
 
-    public void setId(String ids){
-        id.set(ids);
+    public void setBookId(String ids){
+        bookid.set(ids);
     }
 
     public void setAuthor(String authors){
@@ -76,7 +88,7 @@ public class Book {
     }
 
     public void setDescr(String descrs){
-        description.set(descrs);
+        descripe.set(descrs);
     }
 
 

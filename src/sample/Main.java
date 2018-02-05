@@ -1,12 +1,19 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -44,31 +51,30 @@ public class Main extends Application {
             doc.getDocumentElement().normalize();
 
             NodeList nodeList = doc.getElementsByTagName("book");
-            ObservableList<Book> data = null;
+            ObservableList<Book> data = FXCollections.observableArrayList();
 
             for (int i = 0; i < nodeList.getLength(); i++) {
-                // Выводим информацию по каждому из найденных элементов
                 Node node = nodeList.item(i);
 
                 if (Node.ELEMENT_NODE == node.getNodeType()) {
                     Element element = (Element) node;
-                    data = FXCollections.observableArrayList(
-                            new Book(element.getAttribute("id"),
-                                    element.getElementsByTagName("author").item(0).getTextContent(),
-                                    element.getElementsByTagName("title").item(0).getTextContent(),
-                                    element.getElementsByTagName("genre").item(0).getTextContent(),
-                                    element.getElementsByTagName("price").item(0).getTextContent(),
-                                    element.getElementsByTagName("publish_date").item(0).getTextContent(),
-                                    element.getElementsByTagName("description").item(0).getTextContent()),
-                    new Book("1","test","her","lel","22","12","heheheh")
-                    );
-
+                    data.add(new Book(
+                            i+1,
+                            element.getAttribute("id"),
+                            element.getElementsByTagName("author").item(0).getTextContent(),
+                            element.getElementsByTagName("title").item(0).getTextContent(),
+                            element.getElementsByTagName("genre").item(0).getTextContent(),
+                            element.getElementsByTagName("price").item(0).getTextContent(),
+                            element.getElementsByTagName("publish_date").item(0).getTextContent(),
+                            element.getElementsByTagName("description").item(0).getTextContent()));
                 }
             }
 
 
             final TableView mytable = new TableView();
 
+            TableColumn numberCol = new TableColumn("#");
+            TableColumn bookidCol = new TableColumn("Book ID");
             TableColumn authorCol = new TableColumn("Author");
             TableColumn titleCol = new TableColumn("Title");
             TableColumn genreCol = new TableColumn("Genre");
@@ -77,18 +83,19 @@ public class Main extends Application {
             TableColumn descCol = new TableColumn("Description");
 
 
+
+            numberCol.setCellValueFactory(new PropertyValueFactory<>("count"));
+            bookidCol.setCellValueFactory(new PropertyValueFactory<>("bookId"));
             authorCol.setCellValueFactory(new PropertyValueFactory<>("author"));
             titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
             genreCol.setCellValueFactory(new PropertyValueFactory<>("genre"));
             priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
             publishCol.setCellValueFactory(new PropertyValueFactory<>("date"));
-            descCol.setCellValueFactory(new PropertyValueFactory<>("des"));
+            descCol.setCellValueFactory(new PropertyValueFactory<Book,String>("desc"));
 
 
             mytable.setItems(data);
-            mytable.getColumns().addAll(authorCol,titleCol,genreCol, priceCol, publishCol, descCol);
-
-
+            mytable.getColumns().addAll(numberCol,bookidCol,authorCol,titleCol,genreCol, priceCol, publishCol, descCol);
 
             VBox vbx = new VBox();
             vbx.setAlignment(Pos.CENTER);
@@ -98,12 +105,45 @@ public class Main extends Application {
             hbx.setAlignment(Pos.CENTER);
             hbx.setSpacing(10);
 
+            final TextField id=new TextField();
+            id.setPromptText("Enter 'Book id' ");
+
+            FilteredList<Book> filteredData = new FilteredList<>(data, p -> true);
+            id.textProperty().addListener((observable, oldValue, newValue) -> {
+                filteredData.setPredicate(myObject -> {
+                    // If filter text is empty, display all persons.
+                    if (newValue == null || newValue.isEmpty()) {
+                        return true;
+                    }
+
+                    // Compare first name and last name field in your object with filter.
+                    String lowerCaseFilter = newValue.toLowerCase();
+
+                    if (String.valueOf(myObject.getBookId()).toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                        // Filter matches first name.
+
+                    }
+                    return false; // Does not match.
+                });
+            });
+
+            SortedList<Book> sortedData = new SortedList<>(filteredData);
+
+            // 4. Bind the SortedList comparator to the TableView comparator.
+            sortedData.comparatorProperty().bind(mytable.comparatorProperty());
+            // 5. Add sorted (and filtered) data to the table.
+            mytable.setItems(sortedData);
+
+
+
             vbx.getChildren().addAll(mytable,hbx);
+            hbx.getChildren().addAll(id);
 
             StackPane root = new StackPane();
             primaryStage.setTitle("Books: "+doc.getDocumentElement().getNodeName());
             root.getChildren().add(vbx);
-            primaryStage.setScene(new Scene(root, 592, 425));
+            primaryStage.setScene(new Scene(root, 1100, 500));
             primaryStage.show();
 
 
