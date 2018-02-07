@@ -34,15 +34,15 @@ import java.util.logging.Logger;
 public class Main extends Application {
 
 
-    private static final String FILENAME = "books.xml";
+    private static final String FILENAME = "books.xml";//name xml
 
     @Override
     public void start(Stage primaryStage) {
         try {
-            final File xmlFile = new File(System.getProperty("user.dir")+File.separator + FILENAME);
+            final File xmlFile = new File(System.getProperty("user.dir")+File.separator + FILENAME);//correct source folder
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(xmlFile);
+            Document doc = db.parse(xmlFile);//parse xml File
 
             doc.getDocumentElement().normalize();
 
@@ -55,7 +55,7 @@ public class Main extends Application {
                 if (Node.ELEMENT_NODE == node.getNodeType()) {
                     Element element = (Element) node;
                     data.add(new Book(
-                            i+1,
+                            i+1,// row number
                             element.getAttribute("id"),
                             element.getElementsByTagName("author").item(0).getTextContent(),
                             element.getElementsByTagName("title").item(0).getTextContent(),
@@ -107,29 +107,23 @@ public class Main extends Application {
             FilteredList<Book> filteredData = new FilteredList<>(data, p -> true);
             id.textProperty().addListener((observable, oldValue, newValue) -> {
                 filteredData.setPredicate(myObject -> {
-                    // If filter text is empty, display all persons.
-                    if (newValue == null || newValue.isEmpty()) {
+                    if (newValue == null || newValue.isEmpty()) {//If filter text is empty, display all persons.
                         return true;
                     }
 
-                    // Compare first name and last name field in your object with filter.
-                    String lowerCaseFilter = newValue.toLowerCase();
+                    String lowerCaseFilter = newValue.toLowerCase();//to lower case filter
 
                     if (String.valueOf(myObject.getBookId()).toLowerCase().contains(lowerCaseFilter)) {
-                        return true;
-                        // Filter matches first name.
+                        return true;//return find rows
 
                     }
-                    return false; // Does not match.
+                    return false;//return empty
                 });
             });
 
             SortedList<Book> sortedData = new SortedList<>(filteredData);
-
-            // 4. Bind the SortedList comparator to the TableView comparator.
-            sortedData.comparatorProperty().bind(mytable.comparatorProperty());
-            // 5. Add sorted (and filtered) data to the table.
-            mytable.setItems(sortedData);
+            sortedData.comparatorProperty().bind(mytable.comparatorProperty());//Bind the SortedList comparator to the TableView comparator.
+            mytable.setItems(sortedData);//Add sorted (and filtered) data to the table.
 
 
 
