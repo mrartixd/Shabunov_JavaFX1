@@ -1,8 +1,6 @@
 package sample;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.geometry.Pos;
@@ -15,26 +13,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class Main extends Application {
 
-
-    private static final String FILENAME = "books.xml";
 
     @Override
     public void start(Stage primaryStage) {
@@ -80,28 +67,24 @@ public class Main extends Application {
             FilteredList<Book> filteredData = new FilteredList<>(XmlPars.data, p -> true);
             id.textProperty().addListener((observable, oldValue, newValue) -> {
                 filteredData.setPredicate(myObject -> {
-                    // If filter text is empty, display all persons.
+
                     if (newValue == null || newValue.isEmpty()) {
                         return true;
                     }
 
-                    // Compare first name and last name field in your object with filter.
                     String lowerCaseFilter = newValue.toLowerCase();
 
                     if (String.valueOf(myObject.getBookId()).toLowerCase().contains(lowerCaseFilter)) {
                         return true;
-                        // Filter matches first name.
 
                     }
-                    return false; // Does not match.
+                    return false;
                 });
             });
 
             SortedList<Book> sortedData = new SortedList<>(filteredData);
 
-            // 4. Bind the SortedList comparator to the TableView comparator.
             sortedData.comparatorProperty().bind(mytable.comparatorProperty());
-            // 5. Add sorted (and filtered) data to the table.
             mytable.setItems(sortedData);
 
 
