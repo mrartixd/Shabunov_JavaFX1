@@ -1,3 +1,6 @@
+/**
+ * RDIR61 Artur Shabunov
+ */
 package sample;
 
 import javafx.beans.property.SimpleIntegerProperty;

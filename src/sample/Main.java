@@ -1,3 +1,7 @@
+/**
+ * RDIR61 Artur Shabunov
+ */
+
 package sample;
 
 import javafx.application.Application;
