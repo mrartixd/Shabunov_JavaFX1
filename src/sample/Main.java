@@ -38,33 +38,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        try {
-            final File xmlFile = new File(System.getProperty("user.dir")+File.separator + FILENAME);
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(xmlFile);
-
-            doc.getDocumentElement().normalize();
-
-            NodeList nodeList = doc.getElementsByTagName("book");
-            ObservableList<Book> data = FXCollections.observableArrayList();
-
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-
-                if (Node.ELEMENT_NODE == node.getNodeType()) {
-                    Element element = (Element) node;
-                    data.add(new Book(
-                            i+1,
-                            element.getAttribute("id"),
-                            element.getElementsByTagName("author").item(0).getTextContent(),
-                            element.getElementsByTagName("title").item(0).getTextContent(),
-                            element.getElementsByTagName("genre").item(0).getTextContent(),
-                            element.getElementsByTagName("price").item(0).getTextContent(),
-                            element.getElementsByTagName("publish_date").item(0).getTextContent(),
-                            element.getElementsByTagName("description").item(0).getTextContent()));
-                }
-            }
 
 
             final TableView mytable = new TableView();
@@ -90,7 +63,7 @@ public class Main extends Application {
             descCol.setCellValueFactory(new PropertyValueFactory<Book,String>("desc"));
 
 
-            mytable.setItems(data);
+            mytable.setItems(XmlPars.data);
             mytable.getColumns().addAll(numberCol,bookidCol,authorCol,titleCol,genreCol, priceCol, publishCol, descCol);
 
             VBox vbx = new VBox();
@@ -104,7 +77,7 @@ public class Main extends Application {
             final TextField id=new TextField();
             id.setPromptText("Enter 'Book id' ");
 
-            FilteredList<Book> filteredData = new FilteredList<>(data, p -> true);
+            FilteredList<Book> filteredData = new FilteredList<>(XmlPars.data, p -> true);
             id.textProperty().addListener((observable, oldValue, newValue) -> {
                 filteredData.setPredicate(myObject -> {
                     // If filter text is empty, display all persons.
@@ -137,21 +110,19 @@ public class Main extends Application {
             hbx.getChildren().addAll(id);
 
             StackPane root = new StackPane();
-            primaryStage.setTitle("Books: "+doc.getDocumentElement().getNodeName());
+            primaryStage.setTitle("Books: "+XmlPars.doc.getDocumentElement().getNodeName());
             root.getChildren().add(vbx);
+
             primaryStage.setScene(new Scene(root, 1100, 500));
             primaryStage.show();
 
 
-        } catch (ParserConfigurationException | SAXException
-                | IOException ex) {
-            Logger.getLogger(Main.class.getName())
-                    .log(Level.SEVERE, null, ex);
-        }
+
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
+        XmlPars.printBook();
         launch(args);
     }
 }

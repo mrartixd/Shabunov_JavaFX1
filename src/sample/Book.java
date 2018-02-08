@@ -13,11 +13,11 @@ public class Book {
     private final SimpleStringProperty price;
     private final SimpleStringProperty pubdate;
     private final SimpleStringProperty descripe;
-    private final SimpleIntegerProperty count;
+    private final SimpleIntegerProperty counta;
 
 
     Book(int count, String idb, String authorb, String titleb, String genreb, String priceb, String date, String desc){
-        this.count = new SimpleIntegerProperty(count);
+        this.counta = new SimpleIntegerProperty(count);
         this.bookid = new SimpleStringProperty(idb);
         this.author = new SimpleStringProperty(authorb);
         this.title = new SimpleStringProperty(titleb);
@@ -28,11 +28,11 @@ public class Book {
     }
 
     public int getCount() {
-        return count.get();
+        return counta.get();
     }
 
     public void setCount(int count) {
-        this.count.set(count);
+        this.counta.set(count);
     }
 
     public String getBookId() {
